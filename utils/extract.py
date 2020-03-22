@@ -8,13 +8,26 @@ import numpy as np
 
 # config:
 
-f_s = 44100 # [Hz]
+# f_s = 44100 # [Hz]
+f_s = 48000 # [Hz]
 
-params_stft = {
+params = {}
+
+params['stft'] = {
+    'f_s': f_s, 
     'n_fft': 4096,
     'win_length': 4096, 
     'hop_length': 512, 
+    
+}
+
+params['mel'] = {
     'f_s': f_s, 
+    'n_fft': 4096,
+    'hop_length': 512,
+    'fmin': 0,
+    'fmax': 10000,
+    'n_mels': int(6*64),
 }
 
 

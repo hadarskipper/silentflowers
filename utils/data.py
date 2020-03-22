@@ -10,7 +10,7 @@ def load_wave(file_path):
     t = np.arange(len(x_wave))/f_s
     
     x_dict = {
-        'x': x_wave,
+        's': x_wave,
         't': t
     }
     

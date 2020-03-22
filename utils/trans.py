@@ -8,7 +8,10 @@ import numpy as np
 
 # functions:
 
-def wave_to_stft(wave, f_s, win_length, hop_length, n_fft):
+def wave_to_stft(
+    wave, 
+    f_s, win_length, 
+    hop_length, n_fft):
     
     # short-time fourier transform:
     
@@ -35,26 +38,35 @@ def wave_to_stft(wave, f_s, win_length, hop_length, n_fft):
     return stft
 
 
-def wave_to_mel(wave, 
-                n_fft=1024, hop_length=512, sample_rate=16000, 
-                fmin=10, fmax=10000, n_mels=64, 
-                plot_flag=False):
+def wave_to_mel(wave, f_s, n_fft, hop_length,
+                fmin, fmax, n_mels):
+    
+    # transform - mel spectrogram:
 
-    mel_spec = librosa.feature.melspectrogram(wave, n_fft=n_fft, hop_length=hop_length,
-                                              n_mels=n_mels, sr=sample_rate, power=1.0, 
-                                              fmin=fmin, fmax=fmax)
-
+    mel_spec = librosa.feature.melspectrogram(
+        wave, 
+        n_fft=n_fft, hop_length=hop_length, 
+        n_mels=n_mels, sr=f_s, fmin=fmin, fmax=fmax, 
+        power=1)
     mel_spec_db = librosa.amplitude_to_db(mel_spec, ref=np.max)
+    
+    # create axes:
+    
+    max_t = (len(wave)-1)/f_s
+    n_t = mel_spec.shape[1]
+    f_mel = librosa.core.mel_frequencies(n_mels=n_mels, fmin=fmin, fmax=fmax, htk=False)
+    t_mel = np.linspace(0, max_t, n_t)
+    
+    # organize:
+    
+    mel = {
+        's': mel_spec_db,
+        'f': f_mel,
+        't': t_mel
+    }
+    
+    return mel
 
-    if plot_flag:
 
-        fig, ax = plt.subplots(1, 1, figsize=(12, 5))
-        librosa.display.specshow(mel_spec_db, x_axis='time',  y_axis='mel', 
-                                 sr=sample_rate, hop_length=hop_length, 
-                                 fmin=fmin, fmax=fmax, ax=ax)
-        title = 'n_mels={},  fmin={},  fmax={}'
-        ax.set_title(title.format(n_mels, fmin, fmax))
-        plt.show()
 
-    return mel_spec_db
 
